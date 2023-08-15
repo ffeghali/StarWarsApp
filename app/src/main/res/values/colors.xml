@@ -2,4 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="purpleBlack">#1a141b</color>
+    <color name="offWhite">#e6e0d9</color>
+    <color name="purpleGray">#7f7c83</color>
+    <color name="pinkGray">#736b73</color>
+    <color name="favPink">#623b48</color>
+
+    <color name="tanAccent">#e3cdb3</color>
+    <color name="blueBlack">#111f2B</color>
 </resources>
