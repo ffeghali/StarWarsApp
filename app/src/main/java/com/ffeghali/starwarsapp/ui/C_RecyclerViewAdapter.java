@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ffeghali.starwarsapp.R;
-import com.ffeghali.starwarsapp.data.models.CharacterModel;
+import com.ffeghali.starwarsapp.models.CharacterModel;
 
 import java.util.ArrayList;
 
