@@ -1,90 +1,114 @@
 package com.ffeghali.starwarsapp.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
-import com.ffeghali.starwarsapp.models.CharacterModel;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ffeghali.starwarsapp.R;
+import com.ffeghali.starwarsapp.model.CharacterModel;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.ObservableEmitter;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private RecyclerView recyclerView;
-    private ArrayList<CharacterModel> characterModels = new ArrayList<>();
+    private C_RecyclerViewAdapter adapter;
+    private ArrayList<CharacterModel> charactersList = new ArrayList<>();
     private Set<String> uids = new HashSet<>();
-    private SearchView searchBar;
-    private AppCompatButton btn; //todo delete
+    private SearchView searchView;
+    private Disposable searchDisposable;
+    private final PublishSubject<String> searchSubject = PublishSubject.create();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*searchBar = findViewById(R.id.searchBar);
-        searchBar.clearFocus();*/
-
-        /*RecyclerView recyclerView = findViewById(R.id.cRecyclerView);
+        // RECYCLER VIEW
+        RecyclerView recyclerView = findViewById(R.id.cRecyclerView);
         recyclerView.setHasFixedSize(true);
         setUpCharacterModels();
-        C_RecyclerViewAdapter adapter = new C_RecyclerViewAdapter(this,
-                characterModels);
+        adapter = new C_RecyclerViewAdapter(this, charactersList);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));*/
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // TODO testing, delete later
-        btn = findViewById(R.id.btn);
-        btn.setOnClickListener(new View.OnClickListener() {
+        // SEARCH VIEW
+        searchView = findViewById(R.id.searchBar);
+        searchView.clearFocus();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View v) {
-                testRequest();
+            public boolean onQueryTextSubmit(String query) {
+                return false;  // todo
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchSubject.onNext(newText);
+                return true;
             }
         });
+        setUpSearchObservable();
     }
 
-    public void testRequest () {
-        fetchDataFromSwapi()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+    private void setUpSearchObservable() {
+        searchDisposable = searchSubject
+                .debounce(300, TimeUnit.MILLISECONDS) // This waits until there's a 300ms pause in input to send request
+                .distinctUntilChanged()  // Only make a new request if the query changed
+                .switchMap(query -> fetchDataForQuery(query)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnError(e -> Log.e(TAG, "Error fetching data", e))
+                )
                 .subscribe(
                         result -> {
-                            // Handle the result (JSON) here
-                            Log.d("SWAPI", result);
+                            // Extract the results array from json string
+                            Gson gson = new Gson();
+                            JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+
+                            // Converting json Object into a list of CharacterModel objects
+                            Type listType = new TypeToken<ArrayList<CharacterModel>>(){}.getType();
+                            charactersList = gson.fromJson(jsonObject.get("results"), listType);
+                            //Send new list to adapter to update the recycler view
+                            adapter.setSearchedList(charactersList);
                         },
                         throwable -> {
                             // Handle error here
-                            Log.e("SWAPI", "Error fetching data", throwable);
+                            Log.e(TAG, "Error in the chain", throwable);
                         }
                 );
-        }
+    }
 
-    private Observable<String> fetchDataFromSwapi () {
-        return Observable.create((ObservableEmitter<String> emitter) -> {
+    private Observable<String> fetchDataForQuery(String query) {
+        return Observable.create(emitter -> {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
 
             try {
-                URL url = new URL("https://swapi.dev/api/people/");
+                URL url = new URL("https://swapi.dev/api/people/?search=" + query);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 
@@ -109,6 +133,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (searchDisposable != null && !searchDisposable.isDisposed()) {
+            searchDisposable.dispose();
+        }
     }
 
     /**

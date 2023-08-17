@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ffeghali.starwarsapp.R;
-import com.ffeghali.starwarsapp.models.CharacterModel;
+import com.ffeghali.starwarsapp.model.CharacterModel;
 
 import java.util.ArrayList;
 
@@ -21,6 +21,11 @@ public class C_RecyclerViewAdapter extends RecyclerView.Adapter<C_RecyclerViewAd
     public C_RecyclerViewAdapter(Context context, ArrayList<CharacterModel> characterModels) {
         this.context = context;
         this.characterModels = characterModels;
+    }
+
+    public void setSearchedList(ArrayList<CharacterModel> searchedList){
+        this.characterModels = searchedList;
+        notifyDataSetChanged();
     }
 
     @NonNull
