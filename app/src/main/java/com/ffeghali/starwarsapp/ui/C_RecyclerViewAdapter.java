@@ -71,7 +71,21 @@ public class C_RecyclerViewAdapter extends RecyclerView.Adapter<C_RecyclerViewAd
         public MyViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
+            // Name Button
             tvName = itemView.findViewById(R.id.cardName);
+            tvName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recyclerViewInterface != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            recyclerViewInterface.onNameClick(position);
+                        }
+                    }
+                }
+            });
+
+            // Favorite Button
             ivFavorite = itemView.findViewById(R.id.cardFav);
             ivFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -1,6 +1,7 @@
 package com.ffeghali.starwarsapp.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -181,5 +182,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         // change adapter
         adapter.setSearchedList(charactersList);
         return false;
+    }
+
+    @Override
+    public void onNameClick(int position) {
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+
+        // todo create parceable to pass to mainactivity (best practice)
+        intent.putExtra("NAME", charactersList.get(position).getName());
+
+        startActivity(intent);
     }
 }
