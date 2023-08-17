@@ -1,4 +1,4 @@
-package com.ffeghali.starwarsapp.ui;
+package com.ffeghali.starwarsapp.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ffeghali.starwarsapp.R;
-import com.ffeghali.starwarsapp.models.CharacterModel;
+import com.ffeghali.starwarsapp.model.CharacterModel;
 
 import java.util.ArrayList;
 

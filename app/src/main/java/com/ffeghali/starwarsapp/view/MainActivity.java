@@ -1,26 +1,23 @@
-package com.ffeghali.starwarsapp.ui;
+package com.ffeghali.starwarsapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
-import com.ffeghali.starwarsapp.models.CharacterModel;
+
+import com.ffeghali.starwarsapp.model.CharacterModel;
 import com.ffeghali.starwarsapp.R;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.ffeghali.starwarsapp.viewmodel.MainViewModel;
 
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.ObservableEmitter;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+
+import java.io.IOException;
+import okhttp3.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +38,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.makeQuery().observe(this, new androidx.lifecycle.Observer<ResponseBody>() {
+            @Override
+            public void onChanged(ResponseBody responseBody) {
+                Log.d(TAG, "onChanged: this is a live data response!");
+                try {
+                    Log.d(TAG, "onChanged: " + responseBody.string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         /*searchBar = findViewById(R.id.searchBar);
         searchBar.clearFocus();*/
 
@@ -50,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         C_RecyclerViewAdapter adapter = new C_RecyclerViewAdapter(this,
                 characterModels);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));*/
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // TODO testing, delete later
         btn = findViewById(R.id.btn);
@@ -59,10 +69,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 testRequest();
             }
-        });
+        });*/
     }
 
-    public void testRequest () {
+
+    /*public void testRequest () {
         fetchDataFromSwapi()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -76,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.e("SWAPI", "Error fetching data", throwable);
                         }
                 );
-        }
+        }*/
 
-    private Observable<String> fetchDataFromSwapi () {
+    /*private Observable<String> fetchDataFromSwapi () {
         return Observable.create((ObservableEmitter<String> emitter) -> {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
@@ -109,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-    }
+    }*/
 
     /**
      * Creates an ArrayList of CharacterModel objects based off live search results

@@ -1,4 +1,4 @@
-package com.ffeghali.starwarsapp.models;
+package com.ffeghali.starwarsapp.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

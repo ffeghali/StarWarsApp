@@ -6,5 +6,5 @@ package com.ffeghali.starwarsapp.util;
  * */
 public class Constants {
 
-    public static final String BASE_URL = "https://swapi.dev/api/"; //todo
+    public static final String BASE_URL = "https://swapi.dev/api/";
 }
