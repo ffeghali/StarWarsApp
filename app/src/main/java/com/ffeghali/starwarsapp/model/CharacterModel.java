@@ -36,8 +36,11 @@ public class CharacterModel {
         return favorite;
     }
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
+    public void setFavorite() { this.favorite = true;}
+
+    public void changeFavorite() {
+
+        this.favorite = !this.favorite;
     }
 
     @Override

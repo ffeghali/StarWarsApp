@@ -34,13 +34,13 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewInterface {
 
     private static final String TAG = "MainActivity";
     private RecyclerView recyclerView;
     private C_RecyclerViewAdapter adapter;
     private ArrayList<CharacterModel> charactersList = new ArrayList<>();
-    private Set<String> uids = new HashSet<>();
+    private Set<String> charFavs = new HashSet<>();
     private SearchView searchView;
     private Disposable searchDisposable;
     private final PublishSubject<String> searchSubject = PublishSubject.create();
@@ -53,15 +53,13 @@ public class MainActivity extends AppCompatActivity {
         // RECYCLER VIEW
         RecyclerView recyclerView = findViewById(R.id.cRecyclerView);
         recyclerView.setHasFixedSize(true);
-        setUpCharacterModels();
-        adapter = new C_RecyclerViewAdapter(this, charactersList);
+        adapter = new C_RecyclerViewAdapter(this, this, charactersList);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // SEARCH VIEW
         searchView = findViewById(R.id.searchBar);
         searchView.clearFocus();
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -76,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         });
         setUpSearchObservable();
 
+        // Keyboard changes
         searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -104,7 +103,15 @@ public class MainActivity extends AppCompatActivity {
                             // Converting json Object into a list of CharacterModel objects
                             Type listType = new TypeToken<ArrayList<CharacterModel>>(){}.getType();
                             charactersList = gson.fromJson(jsonObject.get("results"), listType);
-                            //Send new list to adapter to update the recycler view
+
+                            // Check which characters are favorites and set them
+                            // (there's no uids so used names because there's no duplicates)
+                            for (int i=0; i< charactersList.size(); i++) {
+                                if (charFavs.contains(charactersList.get(i).getName())) {
+                                    charactersList.get(i).setFavorite();
+                                }
+                            }
+                            // Send new list to adapter to update the recycler view
                             adapter.setSearchedList(charactersList);
                         },
                         throwable -> {
@@ -160,20 +167,19 @@ public class MainActivity extends AppCompatActivity {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    /**
-     * Creates an ArrayList of CharacterModel objects based off live search results
-     * in the SearchView in MainActivity.
-     * TODO fix this description after API and viewmodel integration, this will prob be a viewmodel method
-     */
-    private void setUpCharacterModels() {
-        /*String[] characterNames = new String[]{"Luke Skywalker", "R2-D2"};
-        boolean[] favorite = new boolean[]{false, false};
+    @Override
+    public boolean onFavClick(int position) {
+        // add or delete their name from favorites set
+        if(charFavs.contains(charactersList.get(position).getName())) {
+            charFavs.remove(charactersList.get(position).getName());
+        }
+        else {charFavs.add(charactersList.get(position).getName());}
 
-        for (int i = 0; i<characterNames.length; i++){
-            characterModels.add(new CharacterModel(characterNames[i],
-                    favorite[i]));
-        }*/
+        // change character model setFavorite
+        charactersList.get(position).changeFavorite();
 
+        // change adapter
+        adapter.setSearchedList(charactersList);
+        return false;
     }
-
 }
