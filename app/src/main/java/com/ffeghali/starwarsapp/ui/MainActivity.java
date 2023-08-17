@@ -1,7 +1,10 @@
 package com.ffeghali.starwarsapp.ui;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -72,6 +75,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         setUpSearchObservable();
+
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
     }
 
     private void setUpSearchObservable() {
@@ -141,6 +153,11 @@ public class MainActivity extends AppCompatActivity {
         if (searchDisposable != null && !searchDisposable.isDisposed()) {
             searchDisposable.dispose();
         }
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     /**

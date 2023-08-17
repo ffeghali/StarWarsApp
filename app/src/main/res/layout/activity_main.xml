@@ -4,18 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
     tools:context=".ui.MainActivity">
 
-    <!--<androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@color/purpleBlack"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
--->
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchBar"
         android:layout_width="0dp"
