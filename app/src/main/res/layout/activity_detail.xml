@@ -10,6 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:padding="5dp"
         android:background="@color/purpleBlack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,8 +36,9 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/char_name"
+                android:textStyle="bold"
                 android:textColor="@color/offWhite"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <ImageView
                 android:id="@+id/favBtn"
