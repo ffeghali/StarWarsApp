@@ -11,16 +11,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ffeghali.starwarsapp.R;
-import com.ffeghali.starwarsapp.models.CharacterModel;
+import com.ffeghali.starwarsapp.model.CharacterModel;
 
 import java.util.ArrayList;
 
 public class C_RecyclerViewAdapter extends RecyclerView.Adapter<C_RecyclerViewAdapter.MyViewHolder> {
+    private final RecyclerViewInterface recyclerViewInterface;
     Context context;
     ArrayList<CharacterModel> characterModels;
-    public C_RecyclerViewAdapter(Context context, ArrayList<CharacterModel> characterModels) {
+
+    public C_RecyclerViewAdapter(RecyclerViewInterface recyclerViewInterface, Context context, ArrayList<CharacterModel> characterModels) {
+        this.recyclerViewInterface = recyclerViewInterface;
         this.context = context;
         this.characterModels = characterModels;
+    }
+
+    public void setSearchedList(ArrayList<CharacterModel> searchedList){
+        this.characterModels = searchedList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -30,7 +38,7 @@ public class C_RecyclerViewAdapter extends RecyclerView.Adapter<C_RecyclerViewAd
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.recycler_view_row, parent, false);
 
-        return new C_RecyclerViewAdapter.MyViewHolder(view);
+        return new C_RecyclerViewAdapter.MyViewHolder(view, recyclerViewInterface);
     }
 
     @Override
@@ -60,11 +68,37 @@ public class C_RecyclerViewAdapter extends RecyclerView.Adapter<C_RecyclerViewAd
 
         TextView tvName;
         ImageView ivFavorite;
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
+            // Name Button
             tvName = itemView.findViewById(R.id.cardName);
+            tvName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recyclerViewInterface != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            recyclerViewInterface.onNameClick(position);
+                        }
+                    }
+                }
+            });
+
+            // Favorite Button
             ivFavorite = itemView.findViewById(R.id.cardFav);
+            ivFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (recyclerViewInterface != null) {
+                        int position = getAdapterPosition();
+
+                        if (position != RecyclerView.NO_POSITION) {
+                            recyclerViewInterface.onFavClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 }

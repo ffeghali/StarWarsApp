@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">StarWarsApp</string>
     <string name="card_name">Luke Skywalker</string>
+    <string name="char_name">Fay Feghali</string>
 </resources>
