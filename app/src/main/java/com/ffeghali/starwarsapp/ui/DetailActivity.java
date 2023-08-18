@@ -2,6 +2,7 @@ package com.ffeghali.starwarsapp.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,7 @@ public class DetailActivity extends AppCompatActivity {
     private CharacterModel character;
     private String name, height, mass, hair, skin, eye, birthdate, gender;
     private boolean fav;
+    private Set<String> retrievedSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class DetailActivity extends AppCompatActivity {
 
         // SHARED PREFERENCES
         sharedPreferences = getSharedPreferences("char_favs", MODE_PRIVATE);
-        Set<String> retrievedSet = sharedPreferences.getStringSet("hashSetKey", new HashSet<String>());
+        retrievedSet = sharedPreferences.getStringSet("hashSetKey", new HashSet<String>());
 
         // RETRIEVE AND FORMAT DATA FROM OTHER ACTIVITY
         character = getIntent().getParcelableExtra("character");
@@ -76,12 +78,12 @@ public class DetailActivity extends AppCompatActivity {
                 }
                 // Remove fav from shared pre if it was unclick
                 if(!fav && retrievedSet.contains(name)) {
+                    retrievedSet.remove(name);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.remove(name);
+                    editor.putStringSet("hashSetKey", retrievedSet);
                     editor.apply();
                 }
                 onBackPressed();
-                //TODO Shared pref not saving correctly
             }
         });
         // CHARACTER NAME
@@ -97,6 +99,7 @@ public class DetailActivity extends AppCompatActivity {
                 if(fav){
                     favBtn.setImageResource(R.drawable.baseline_favorite_border_24);
                     fav = false;
+
                 } else {
                     favBtn.setImageResource(R.drawable.baseline_favorite_24);
                     fav = true;
@@ -107,9 +110,9 @@ public class DetailActivity extends AppCompatActivity {
         // CHARACTER DETAILS
         // TODO I WOULD CHANGE THIS INTO A RECYCLER VIEW
         ListView charDetailsList = findViewById(R.id.charDetails);
-        String[] details = {"Height: "+ height, "Mass: "+ mass,
-                "Hair: "+hair,  "Skin: "+ skin, "Eye Color: "+ eye,
-                "Birthday: "+ birthdate, "Gender: "+gender};
+        String[] details = {"Height: "+ height+"cm", "Mass: "+ mass +"kg",
+                "Hair Color: "+hair,  "Skin Color: "+ skin,
+                "Eye Color: "+ eye, "Birthday: "+ birthdate, "Gender: "+gender};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, details);
         charDetailsList.setAdapter(adapter);
