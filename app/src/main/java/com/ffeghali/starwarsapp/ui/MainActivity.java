@@ -209,18 +209,17 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         // Update favs list in Main Activity
         sharedPreferences = getSharedPreferences("char_favs", MODE_PRIVATE);
         charFavs = sharedPreferences.getStringSet("hashSetKey", new HashSet<String>());
-        Log.d(TAG, "onResume"+ charFavs);
-
+        Log.d(TAG, "onResume"+charFavs);
         // Get previous search query and set up new observable to reset RV list
         searchSubject.onNext(searchView.getQuery().toString());
         setUpSearchObservable();
         // Update RV List UI
-        for (int i=0; i< charactersList.size(); i++) {
+        /*for (int i=0; i< charactersList.size(); i++) {
             if (charFavs.contains(charactersList.get(i).getName())) {
                 charactersList.get(i).setFavorite();
             }
         }
-        adapter.setSearchedList(charactersList);
+        adapter.setSearchedList(charactersList);*/
     }
 
     @Override

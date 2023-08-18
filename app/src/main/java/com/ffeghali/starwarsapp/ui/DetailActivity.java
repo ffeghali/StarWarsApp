@@ -72,6 +72,7 @@ public class DetailActivity extends AppCompatActivity {
                 // Add fav to shared pref if it was clicked
                 if(fav && !retrievedSet.contains(name)){
                     retrievedSet.add(name);
+                    Log.d(TAG, "Fav Click add fav to set. New List:  " + retrievedSet.toString());
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putStringSet("hashSetKey", retrievedSet);
                     editor.apply();
@@ -79,6 +80,7 @@ public class DetailActivity extends AppCompatActivity {
                 // Remove fav from shared pre if it was unclick
                 if(!fav && retrievedSet.contains(name)) {
                     retrievedSet.remove(name);
+                    Log.d(TAG, "Fav Click remove fav from set. New List:  " + retrievedSet.toString());
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putStringSet("hashSetKey", retrievedSet);
                     editor.apply();
