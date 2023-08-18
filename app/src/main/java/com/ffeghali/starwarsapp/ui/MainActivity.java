@@ -2,6 +2,7 @@ package com.ffeghali.starwarsapp.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,12 +45,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private Set<String> charFavs = new HashSet<>();
     private SearchView searchView;
     private Disposable searchDisposable;
+    SharedPreferences sharedPreferences;
     private final PublishSubject<String> searchSubject = PublishSubject.create();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPreferences = getSharedPreferences("char_favs", MODE_PRIVATE);
 
         // RECYCLER VIEW
         RecyclerView recyclerView = findViewById(R.id.cRecyclerView);
@@ -156,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     }
 
     @Override
+    //todo need to add this somewhere to stop observing when in other activity?
     protected void onDestroy() {
         super.onDestroy();
         if (searchDisposable != null && !searchDisposable.isDisposed()) {
@@ -188,8 +193,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     public void onNameClick(int position) {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
 
-        // todo create parceable to pass to mainactivity (best practice)
+        // TODO create parceable to pass to mainactivity (best practice)
         intent.putExtra("NAME", charactersList.get(position).getName());
+
+        // Save charFavs Hashset to Shared Preferences to access in another activity
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("hashSetKey", charFavs);
+        editor.apply();
 
         startActivity(intent);
     }

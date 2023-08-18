@@ -6,13 +6,56 @@
     android:layout_height="match_parent"
     tools:context=".ui.DetailActivity">
 
-    <TextView
-        android:id="@+id/nameTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/char_name"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/purpleBlack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/charDetails">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/offWhite"
+                android:src="@drawable/baseline_arrow_back_24" />
+
+            <TextView
+                android:id="@+id/nameTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/char_name"
+                android:textColor="@color/offWhite"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/favBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:tint="@color/offWhite"
+                app:srcCompat="@drawable/baseline_favorite_border_24" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ListView
+        android:id="@+id/charDetails"
+        android:layout_width="409dp"
+        android:layout_height="669dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
