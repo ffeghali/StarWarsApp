@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private Disposable searchDisposable;
     SharedPreferences sharedPreferences;
     private final PublishSubject<String> searchSubject = PublishSubject.create();
+    public static final String CHARACTER_KEY = "character";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,9 +193,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     @Override
     public void onNameClick(int position) {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-
-        // TODO create parceable to pass to mainactivity (best practice)
-        intent.putExtra("NAME", charactersList.get(position).getName());
+        intent.putExtra(CHARACTER_KEY, charactersList.get(position));
 
         // Save charFavs Hashset to Shared Preferences to access in another activity
         SharedPreferences.Editor editor = sharedPreferences.edit();

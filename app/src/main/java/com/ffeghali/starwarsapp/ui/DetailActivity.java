@@ -14,7 +14,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ffeghali.starwarsapp.R;
+import com.ffeghali.starwarsapp.model.CharacterModel;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +24,8 @@ public class DetailActivity extends AppCompatActivity {
     private static final String TAG = "DetailActivity";
     SharedPreferences sharedPreferences;
     private TextView nameTV;
+    private CharacterModel character;
+    private String name, height, mass, hair, skin, eye, birthdate, gender;
     private boolean fav;
 
     @Override
@@ -33,9 +37,23 @@ public class DetailActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("char_favs", MODE_PRIVATE);
         Set<String> retrievedSet = sharedPreferences.getStringSet("hashSetKey", new HashSet<String>());
 
-        // RETRIEVE DATA FROM OTHER ACTIVITY
-        String name = getIntent().getStringExtra("NAME");
-        Log.d(TAG, name);
+        // RETRIEVE AND FORMAT DATA FROM OTHER ACTIVITY
+        character = getIntent().getParcelableExtra("character");
+        name = character.getName();
+        height = character.getHeight();
+        if(height == null || height == "n/a") {height="";}
+        mass = character.getMass();
+        if(mass == null || mass == "n/a") {mass="";}
+        hair = character.getHair();
+        if(hair == null || hair == "n/a") {hair="";}
+        skin = character.getSkin();
+        if(skin == null || skin == "n/a") {skin="";}
+        eye = character.getEye();
+        if(eye == null || eye == "n/a") {eye="";}
+        birthdate = character.getBirthdate();
+        if(birthdate == null || birthdate == "n/a") {birthdate="";}
+        gender = character.getGender();
+        if(gender == null || gender == "n/a") {gender="";}
         if (retrievedSet.contains(name)) {fav = true;}
         else{fav = false;}
 
@@ -87,8 +105,12 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         // CHARACTER DETAILS
+        // TODO I WOULD CHANGE THIS INTO A RECYCLER VIEW
         ListView charDetailsList = findViewById(R.id.charDetails);
-        String[] details = {"Item 1", "Item 2", "Item 3"};
+        String[] details = {"Height: "+ height, "Mass: "+ mass,
+                "Hair: "+hair,  "Skin: "+ skin, "Eye Color: "+ eye,
+                "Birthday: "+ birthdate, "Gender: "+gender};
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, details);
         charDetailsList.setAdapter(adapter);
 
